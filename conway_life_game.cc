@@ -23,11 +23,10 @@ public:
     old_ = 1;
     auto& board = boards_[cur_];
     board.resize(height);
-    for (int i = 0; i < board.size(); ++i) {
+    for (unsigned int i = 0; i < board.size(); ++i) {
       auto& row = board[i];
       row.resize(width);
-      for (int j = 0; j < row.size(); ++j) {
-        auto& cell = row[j];
+      for (unsigned int j = 0; j < row.size(); ++j) {
         if (RandDouble() < p) {
           SetLive(boards_[old_], i, j, &board);
         } else {
@@ -41,7 +40,10 @@ public:
   ~Board() {}
 
   void Print() {
-    system("clear");
+    bool clear_sys_call_successful = system("clear") != -1;
+    if (!clear_sys_call_successful) {
+      cout << "Failed to clear screen" << endl;
+    }
     cout << endl;
     for (const auto& row : boards_[cur_]) {
       for (const auto& cell : row) {
@@ -56,8 +58,8 @@ public:
     old_ = old_ ^ cur_;
     cur_ = old_ ^ cur_;
     old_ = old_ ^ cur_;
-    for (int row = 0; row < boards_[cur_].size(); ++row) {
-      for (int col = 0; col < boards_[cur_][row].size(); ++col) {
+    for (unsigned int row = 0; row < boards_[cur_].size(); ++row) {
+      for (unsigned int col = 0; col < boards_[cur_][row].size(); ++col) {
         const int num_live_neighbour =
           GetNumberOfNeighbourLiveCell(boards_[old_], row, col);
         if (IsLiveCell(boards_[old_], row, col)) {
@@ -132,13 +134,14 @@ private:
     (*board)[row][col] = SetTeam(team_to_num);
   }
 
-  void SetDead(int row, int col, vector<vector<char>>* board) {
+  void SetDead(
+      unsigned int row, unsigned int col, vector<vector<char>>* board) {
     (*board)[row][col] = ' ';
   }
 
   const char GetCell(const vector<vector<char>>& board,
-                     int row,
-                     int col) {
+                     unsigned int row,
+                     unsigned int col) {
     if (row < 0 || row >= board.size()) return ' ';
     if (col < 0 || col >= board[row].size()) return ' ';
     return board[row][col];
